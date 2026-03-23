@@ -1,26 +1,223 @@
 @import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+@custom-variant dark (&:is(.dark *));
 
 @theme inline {
+  /* --- Tema Custom Anda --- */
+  --color-surface: #060e20;
+  --color-surface-dim: #060e20;
+  --color-surface-variant: #192540;
+  --color-surface-bright: #1f2b49;
+  --color-surface-container-lowest: #000000;
+  --color-surface-container-low: #091328;
+  --color-surface-container: #0f1930;
+  --color-surface-container-high: #141f38;
+  --color-surface-container-highest: #192540;
+  --color-on-surface: #dee5ff;
+  --color-on-surface-variant: #a3aac4;
+  --color-on-background: #dee5ff;
+  --color-primary-dim: #6063ee;
+  --color-primary-fixed: #9396ff;
+  --color-primary-fixed-dim: #8387ff;
+  --color-on-primary: #0f00a4;
+  --color-on-primary-fixed: #000000;
+  --color-on-primary-container: #0a0081;
+  --color-on-primary-fixed-variant: #0e009d;
+  --color-inverse-primary: #494bd7;
+  --color-primary-container: #9396ff;
+  --color-secondary-dim: #58e7ab;
+  --color-secondary-fixed: #69f6b8;
+  --color-secondary-fixed-dim: #58e7ab;
+  --color-secondary-container: #006c49;
+  --color-on-secondary: #005a3c;
+  --color-on-secondary-fixed: #00452d;
+  --color-on-secondary-fixed-variant: #006544;
+  --color-on-secondary-container: #e1ffec;
+  --color-tertiary: #ffe083;
+  --color-tertiary-dim: #eec200;
+  --color-tertiary-fixed: #fed01b;
+  --color-tertiary-fixed-dim: #eec200;
+  --color-tertiary-container: #fed01b;
+  --color-on-tertiary: #645000;
+  --color-on-tertiary-fixed: #433500;
+  --color-on-tertiary-fixed-variant: #645000;
+  --color-on-tertiary-container: #594700;
+  --color-error: #ff6e84;
+  --color-error-dim: #d73357;
+  --color-error-container: #a70138;
+  --color-on-error: #490013;
+  --color-on-error-container: #ffb2b9;
+  --color-outline: #6d758c;
+  --color-outline-variant: #40485d;
+  --color-surface-tint: #a3a6ff;
+  --color-inverse-surface: #faf8ff;
+  --color-inverse-on-surface: #4d556b;
+
+  /* --- Pemetaan Shadcn UI Tailwind v4 --- */
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
+  --font-sans: var(--font-sans);
   --font-mono: var(--font-geist-mono);
+  --font-heading: var(--font-sans);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --radius-sm: calc(var(--radius) * 0.5);
+  --radius-md: calc(var(--radius) * 0.75);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.25);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+  --radius-4xl: calc(var(--radius) * 2.6);
 }
 
-@media (prefers-color-scheme: dark) {
+@layer base {
+  /* LIGHT MODE - Bawaan Oklch Shadcn Asli Anda */
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: oklch(1 0 0);
+    --foreground: oklch(0.145 0 0);
+    --card: oklch(1 0 0);
+    --card-foreground: oklch(0.145 0 0);
+    --popover: oklch(1 0 0);
+    --popover-foreground: oklch(0.145 0 0);
+    --primary: oklch(0.205 0 0);
+    --primary-foreground: oklch(0.985 0 0);
+    --secondary: oklch(0.97 0 0);
+    --secondary-foreground: oklch(0.205 0 0);
+    --muted: oklch(0.97 0 0);
+    --muted-foreground: oklch(0.556 0 0);
+    --accent: oklch(0.97 0 0);
+    --accent-foreground: oklch(0.205 0 0);
+    --destructive: oklch(0.577 0.245 27.325);
+    --border: oklch(0.922 0 0);
+    --input: oklch(0.922 0 0);
+    --ring: oklch(0.708 0 0);
+    --chart-1: oklch(0.87 0 0);
+    --chart-2: oklch(0.556 0 0);
+    --chart-3: oklch(0.439 0 0);
+    --chart-4: oklch(0.371 0 0);
+    --chart-5: oklch(0.269 0 0);
+    --radius: 0.625rem;
+    --sidebar: oklch(0.985 0 0);
+    --sidebar-foreground: oklch(0.145 0 0);
+    --sidebar-primary: oklch(0.205 0 0);
+    --sidebar-primary-foreground: oklch(0.985 0 0);
+    --sidebar-accent: oklch(0.97 0 0);
+    --sidebar-accent-foreground: oklch(0.205 0 0);
+    --sidebar-border: oklch(0.922 0 0);
+    --sidebar-ring: oklch(0.708 0 0);
+  }
+
+  /* DARK MODE - Tema Custom Hex Anda */
+  .dark {
+    --background: #060e20;
+    --foreground: #dee5ff;
+    --card: #192540;
+    --card-foreground: #dee5ff;
+    --popover: #192540;
+    --popover-foreground: #dee5ff;
+    --primary: #a3a6ff;
+    --primary-foreground: #0f00a4;
+    --secondary: #69f6b8;
+    --secondary-foreground: #005a3c;
+    --muted: #1f2b49;
+    --muted-foreground: #a3aac4;
+    --accent: #1f2b49;
+    --accent-foreground: #dee5ff;
+    --destructive: #ff6e84;
+    --destructive-foreground: #490013;
+    --border: #40485d;
+    --input: #40485d;
+    --ring: #a3a6ff;
+    
+    /* Warna yang saya ambil dari palet custom Anda untuk komponen Shadcn ekstra */
+    --chart-1: #a3a6ff;
+    --chart-2: #69f6b8;
+    --chart-3: #ffe083;
+    --chart-4: #ff6e84;
+    --chart-5: #6d758c;
+    --sidebar: #060e20;
+    --sidebar-foreground: #dee5ff;
+    --sidebar-primary: #a3a6ff;
+    --sidebar-primary-foreground: #0f00a4;
+    --sidebar-accent: #1f2b49;
+    --sidebar-accent-foreground: #dee5ff;
+    --sidebar-border: #40485d;
+    --sidebar-ring: #a3a6ff;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+  html {
+    @apply font-sans;
+  }
 }
+
+@layer components {
+  .glass-card {
+    background: rgba(25, 37, 64, 0.6);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-top: 1px solid rgba(147, 150, 255, 0.15);
+  }
+
+  .glass-panel {
+    background: rgba(25, 37, 64, 0.6);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-top: 1px solid rgba(147, 150, 255, 0.15);
+  }
+
+  .glow-primary { box-shadow: 0 0 20px rgba(99, 102, 241, 0.15); }
+  .active-glow { box-shadow: 0 0 20px rgba(99, 102, 241, 0.15); }
+  .luminous-glow { box-shadow: 0 20px 40px rgba(99, 102, 241, 0.08); }
+  .physics-transition { transition: all 0.4s cubic-bezier(0.2, 0.8, 0.2, 1); }
+
+  .metal-gold { background: linear-gradient(135deg, #ffe083 0%, #645000 100%); }
+  .metal-silver { background: linear-gradient(135deg, #dee5ff 0%, #40485d 100%); }
+  .metal-bronze { background: linear-gradient(135deg, #ffb2b9 0%, #a70138 100%); }
+}
+
+.material-symbols-outlined {
+  font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 24;
+}
+
+.custom-scrollbar::-webkit-scrollbar { width: 4px; }
+.custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+.custom-scrollbar::-webkit-scrollbar-thumb { background: #40485d; border-radius: 10px; }
+
+::selection { background: rgba(163, 166, 255, 0.3); }
