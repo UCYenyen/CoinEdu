@@ -25,6 +25,12 @@ export type FreeCryptoEndpoint = (typeof FREECRYPTO_ENDPOINTS)[number]
 
 const API_KEY = process.env.FREECRYPTO_API_KEY || ''
 const API_BASE = process.env.FREECRYPTO_API_BASE || ''
+const DEFAULT_FREECRYPTO_CACHE_SECONDS = 900
+
+type FetchFreeCryptoOptions = {
+  cacheSeconds?: number
+  noStore?: boolean
+}
 
 export function isFreeCryptoEndpoint(endpoint: string): endpoint is FreeCryptoEndpoint {
   return FREECRYPTO_ENDPOINTS.includes(endpoint as FreeCryptoEndpoint)
@@ -40,7 +46,8 @@ export function getFreeCryptoConfig() {
 
 export async function fetchFreeCrypto(
   endpoint: FreeCryptoEndpoint,
-  searchParams?: URLSearchParams
+  searchParams?: URLSearchParams,
+  options?: FetchFreeCryptoOptions
 ) {
   const url = new URL(`${API_BASE}/${endpoint}`)
 
@@ -50,12 +57,16 @@ export async function fetchFreeCrypto(
     }
   }
 
+  const useNoStore = options?.noStore === true
+  const cacheSeconds = options?.cacheSeconds ?? DEFAULT_FREECRYPTO_CACHE_SECONDS
+
   return fetch(url.toString(), {
     method: 'GET',
     headers: {
       Authorization: `Bearer ${API_KEY}`,
       'Content-Type': 'application/json',
     },
-    cache: 'no-store',
+    cache: useNoStore ? 'no-store' : 'force-cache',
+    next: useNoStore ? undefined : { revalidate: cacheSeconds },
   })
 }

@@ -1,4 +1,5 @@
 import { fetchFreeCrypto, getFreeCryptoConfig } from "@/lib/freecrypto"
+import { unstable_cache } from "next/cache"
 import { ChartAreaInteractive } from "@/components/chart-area-interactive"
 import { DataTable } from "@/components/data-table"
 import { SectionCards } from "@/components/section-cards"
@@ -30,6 +31,7 @@ type FreeCryptoListResponse = {
 }
 
 const CHUNK_SIZE = 120
+const DASHBOARD_CACHE_SECONDS = 1800
 
 const COIN_NAME_MAP: Record<string, string> = {
   BTC: "Bitcoin",
@@ -129,8 +131,17 @@ async function getDashboardCoins(): Promise<MarketCoin[]> {
   }
 }
 
+const getDashboardCoinsCached = unstable_cache(
+  async () => getDashboardCoins(),
+  ["dashboard-market-all-coins"],
+  {
+    revalidate: DASHBOARD_CACHE_SECONDS,
+    tags: ["dashboard-market"],
+  }
+)
+
 export default async function Page() {
-  const coins = await getDashboardCoins()
+  const coins = await getDashboardCoinsCached()
 
   return (
     <div className="flex flex-1 flex-col">

@@ -5,6 +5,7 @@ import { SearchIcon } from "lucide-react"
 
 import type { MarketCoin } from "@/types/market"
 import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import {
@@ -22,6 +23,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
+
+const PAGE_SIZE = 8
 
 function formatPrice(value: number) {
   if (value >= 1000) {
@@ -50,6 +53,7 @@ function formatUpdatedAt(value: string) {
 export function DataTable({ data }: { data: MarketCoin[] }) {
   const [search, setSearch] = React.useState("")
   const [network, setNetwork] = React.useState("all")
+  const [page, setPage] = React.useState(1)
 
   const exchanges = React.useMemo(
     () => Array.from(new Set(data.map((coin) => coin.exchange).filter(Boolean))),
@@ -70,6 +74,23 @@ export function DataTable({ data }: { data: MarketCoin[] }) {
       return matchesSearch && matchesNetwork
     })
   }, [data, network, search])
+
+  const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE))
+
+  React.useEffect(() => {
+    setPage(1)
+  }, [search, network])
+
+  React.useEffect(() => {
+    if (page > totalPages) {
+      setPage(totalPages)
+    }
+  }, [page, totalPages])
+
+  const paginated = React.useMemo(() => {
+    const startIndex = (page - 1) * PAGE_SIZE
+    return filtered.slice(startIndex, startIndex + PAGE_SIZE)
+  }, [filtered, page])
 
   return (
     <Card className="mx-4 lg:mx-6">
@@ -124,7 +145,7 @@ export function DataTable({ data }: { data: MarketCoin[] }) {
                   </TableCell>
                 </TableRow>
               ) : (
-                filtered.map((coin) => (
+                paginated.map((coin) => (
                   <TableRow key={coin.symbol}>
                     <TableCell>{coin.rank}</TableCell>
                     <TableCell>
@@ -161,6 +182,33 @@ export function DataTable({ data }: { data: MarketCoin[] }) {
               )}
             </TableBody>
           </Table>
+        </div>
+        <div className="mt-4 flex items-center justify-between">
+          <p className="text-sm text-muted-foreground">
+            Showing {filtered.length === 0 ? 0 : (page - 1) * PAGE_SIZE + 1}-
+            {Math.min(page * PAGE_SIZE, filtered.length)} of {filtered.length}
+          </p>
+          <div className="flex items-center gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setPage((current) => Math.max(1, current - 1))}
+              disabled={page === 1}
+            >
+              Previous
+            </Button>
+            <span className="text-sm text-muted-foreground">
+              Page {page} of {totalPages}
+            </span>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setPage((current) => Math.min(totalPages, current + 1))}
+              disabled={page === totalPages}
+            >
+              Next
+            </Button>
+          </div>
         </div>
       </CardContent>
     </Card>
