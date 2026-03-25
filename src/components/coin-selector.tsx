@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import {
   Dialog,
   DialogContent,
@@ -169,7 +169,6 @@ export function CoinSelector({
   )
 }
 
-// Fallback coins in case API fails
 const fallbackCoins: Coin[] = [
   { id: '1', name: 'Bitcoin', symbol: 'BTC' },
   { id: '2', name: 'Ethereum', symbol: 'ETH' },
