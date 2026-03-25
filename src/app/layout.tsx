@@ -7,6 +7,7 @@ import { ThemeProvider } from "@/components/providers/ThemeProvider";
 import { AppSidebar } from "@/components/app-sidebar";
 import { SiteHeader } from "@/components/site-header";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
+import { Toaster } from "@/components/ui/sonner";
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-sans' });
 
@@ -58,6 +59,7 @@ export default function RootLayout({
                 {children}
               </SidebarInset>
             </SidebarProvider>
+            <Toaster richColors />
           </TooltipProvider>
         </ThemeProvider>
       </body>

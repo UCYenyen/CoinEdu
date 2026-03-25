@@ -3,6 +3,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { signIn } from "@/lib/auth-client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -11,9 +12,11 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { toast } from "sonner";
 
 export function SignInForm() {
+  const searchParams = useSearchParams();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const redirectTo = searchParams.get("next") || "/";
 
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -26,7 +29,9 @@ export function SignInForm() {
         onResponse: () => setLoading(false),
         onSuccess: () => {
           toast.success("Welcome back!");
-          window.location.href = "/";
+          setTimeout(() => {
+            window.location.href = redirectTo;
+          }, 500);
         },
         onError: (ctx) => {
           toast.error(ctx.error.message);
