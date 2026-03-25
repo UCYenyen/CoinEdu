@@ -11,7 +11,7 @@ function hasAuthCookie(request: NextRequest) {
   )
 }
 
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   const { pathname, search } = request.nextUrl
   const isAuthenticated = hasAuthCookie(request)
 
