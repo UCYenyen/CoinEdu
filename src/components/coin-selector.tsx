@@ -44,7 +44,7 @@ export function CoinSelector({
   const fetchCoins = async () => {
     setLoading(true)
     try {
-      const response = await fetch('/api/coin/get-all', {
+      const response = await fetch('/api/freecrypto/getCryptoList', {
         method: 'GET',
         cache: 'no-store',
       })
@@ -55,7 +55,13 @@ export function CoinSelector({
 
       const data = await response.json()
 
-      const coinsList: Coin[] = data.data || []
+      const upstreamCoins = Array.isArray(data?.result) ? data.result : []
+      const coinsList: Coin[] = upstreamCoins.map((item: Coin) => ({
+        id: item.id || item.symbol,
+        name: item.name?.trim() || item.symbol,
+        symbol: item.symbol,
+        logo: item.logo,
+      }))
 
       setCoins(coinsList)
       setFilteredCoins(coinsList)
