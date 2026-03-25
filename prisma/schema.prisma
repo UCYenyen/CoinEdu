@@ -22,6 +22,9 @@ model User {
   sessions      Session[]
   accounts      Account[]
 
+  seasonXPs    UserSeasonXP[]
+  attempts     DailyAttempt[]
+
   @@unique([email])
   @@map("user")
 }
@@ -72,4 +75,106 @@ model Verification {
 
   @@index([identifier])
   @@map("verification")
+}
+
+model Season {
+  id           String           @id @default(uuid())
+  name         String           // cth: "Season 1: Bull Market Awakens"
+  startDate    DateTime
+  endDate      DateTime
+  isActive     Boolean          @default(false)
+  
+  // Relasi
+  userXPs      UserSeasonXP[]
+}
+
+// Pivot table untuk track XP tiap user di season tertentu (Untuk Leaderboard)
+model UserSeasonXP {
+  id           String   @id @default(uuid())
+  userId       String
+  seasonId     String
+  totalXp      Int      @default(0)
+
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  season       Season   @relation(fields: [seasonId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, seasonId]) // 1 User hanya punya 1 record XP per Season
+  @@index([totalXp(sort: Desc)]) // Index untuk optimasi query Leaderboard
+}
+
+// -----------------------------------------------------------------------------
+// 2. LEARNING MATERIALS (Indicators, L1, L2, Tooltips)
+// -----------------------------------------------------------------------------
+
+model Indicator {
+  id           String     @id @default(uuid())
+  name         String     @unique // cth: "Market Capitalization", "Volume"
+  slug         String     @unique // cth: "market-capitalization"
+  
+  // Relasi
+  materials    Material[]
+  questions    Question[]
+  attempts     DailyAttempt[]
+}
+
+// Untuk L1, L2, dst.
+model Material {
+  id           String     @id @default(uuid())
+  indicatorId  String
+  level        String     // cth: "L1", "L2"
+  content      String     @db.Text // Teks materi pembelajaran
+  order        Int        // Urutan tampil materi (1 untuk L1, 2 untuk L2)
+
+  indicator    Indicator  @relation(fields: [indicatorId], references: [id], onDelete: Cascade)
+}
+
+// Tabel untuk menyimpan data [highlighted cyan] / penjelasan tambahan
+model TooltipGlossary {
+  id           String     @id @default(uuid())
+  keyword      String     @unique // cth: "Blue Chips", "Slippage", "Impermanent Loss"
+  explanation  String     @db.Text // Teks popup yang muncul
+}
+
+// -----------------------------------------------------------------------------
+// 3. QUIZ & PROGRESS SYSTEM (Q1, Q2, dan batas 1x sehari)
+// -----------------------------------------------------------------------------
+
+model Question {
+  id           String           @id @default(uuid())
+  indicatorId  String
+  questionText String           @db.Text
+  xpReward     Int              @default(10) // Bobot XP jika benar
+  xpPenalty    Int              @default(0)  // Bobot minus XP jika salah (bisa di set 0)
+  
+  // Relasi
+  indicator    Indicator        @relation(fields: [indicatorId], references: [id], onDelete: Cascade)
+  options      QuestionOption[]
+  attempts     DailyAttempt[]
+}
+
+model QuestionOption {
+  id           String   @id @default(uuid())
+  questionId   String
+  optionText   String   @db.Text
+  isCorrect    Boolean  @default(false) // [highlighted yellow]
+
+  question     Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+}
+
+// Tabel ini mencatat histori jawaban user untuk membatasi 1x klik per hari
+model DailyAttempt {
+  id           String    @id @default(uuid())
+  userId       String
+  indicatorId  String
+  questionId   String
+  isCorrect    Boolean
+  xpEarned     Int       // Bisa positif (reward), nol, atau negatif (penalty)
+  attemptedAt  DateTime  @default(now())
+
+  user         User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  indicator    Indicator @relation(fields: [indicatorId], references: [id], onDelete: Cascade)
+  question     Question  @relation(fields: [questionId], references: [id], onDelete: Cascade)
+
+  // Index ini sangat penting untuk mengecek "Apakah user ini sudah jawab indikator ini hari ini?"
+  @@index([userId, indicatorId, attemptedAt]) 
 }
