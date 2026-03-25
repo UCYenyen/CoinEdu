@@ -10,100 +10,131 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 import { TrendingUpIcon, TrendingDownIcon } from "lucide-react"
+import type { MarketCoin } from "@/types/market"
 
-export function SectionCards() {
+function formatPrice(value: number) {
+  if (value >= 1000) {
+    return `$${value.toLocaleString("en-US", {
+      maximumFractionDigits: 2,
+    })}`
+  }
+
+  return `$${value.toLocaleString("en-US", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 4,
+  })}`
+}
+
+function formatPercent(value: number) {
+  return `${value > 0 ? "+" : ""}${value.toFixed(2)}%`
+}
+
+export function SectionCards({ data }: { data: MarketCoin[] }) {
+  const averageChange =
+    data.length > 0
+      ? data.reduce((acc, coin) => acc + coin.change24h, 0) / data.length
+      : 0
+
+  const topGainer =
+    data.length > 0
+      ? data.reduce((best, current) =>
+          current.change24h > best.change24h ? current : best
+        )
+      : null
+
+  const topLoser =
+    data.length > 0
+      ? data.reduce((worst, current) =>
+          current.change24h < worst.change24h ? current : worst
+        )
+      : null
+
+  const btc = data.find((coin) => coin.symbol === "BTC")
+
   return (
-    <div className="grid grid-cols-1 gap-4 px-4 *:data-[slot=card]:bg-gradient-to-t *:data-[slot=card]:from-primary/5 *:data-[slot=card]:to-card *:data-[slot=card]:shadow-xs lg:px-6 @xl/main:grid-cols-2 @5xl/main:grid-cols-4 dark:*:data-[slot=card]:bg-card">
+    <div className="grid grid-cols-1 gap-4 px-4 *:data-[slot=card]:bg-linear-to-t *:data-[slot=card]:from-primary/5 *:data-[slot=card]:to-card *:data-[slot=card]:shadow-xs lg:px-6 @xl/main:grid-cols-2 @5xl/main:grid-cols-4 dark:*:data-[slot=card]:bg-card">
       <Card className="@container/card">
         <CardHeader>
-          <CardDescription>Total Revenue</CardDescription>
+          <CardDescription>BTC Price</CardDescription>
           <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
-            $1,250.00
+            {btc ? formatPrice(btc.price) : "-"}
           </CardTitle>
           <CardAction>
             <Badge variant="outline">
-              <TrendingUpIcon
-              />
-              +12.5%
+              {btc && btc.change24h >= 0 ? <TrendingUpIcon /> : <TrendingDownIcon />}
+              {btc ? formatPercent(btc.change24h) : "-"}
             </Badge>
           </CardAction>
         </CardHeader>
         <CardFooter className="flex-col items-start gap-1.5 text-sm">
           <div className="line-clamp-1 flex gap-2 font-medium">
-            Trending up this month{" "}
-            <TrendingUpIcon className="size-4" />
+            Live spot price from FreeCrypto API
           </div>
           <div className="text-muted-foreground">
-            Visitors for the last 6 months
+            Updated with latest exchange feed
           </div>
         </CardFooter>
       </Card>
       <Card className="@container/card">
         <CardHeader>
-          <CardDescription>New Customers</CardDescription>
+          <CardDescription>Top Gainer (24h)</CardDescription>
           <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
-            1,234
+            {topGainer ? topGainer.symbol : "-"}
           </CardTitle>
           <CardAction>
             <Badge variant="outline">
-              <TrendingDownIcon
-              />
-              -20%
+              <TrendingUpIcon />
+              {topGainer ? formatPercent(topGainer.change24h) : "-"}
             </Badge>
           </CardAction>
         </CardHeader>
         <CardFooter className="flex-col items-start gap-1.5 text-sm">
           <div className="line-clamp-1 flex gap-2 font-medium">
-            Down 20% this period{" "}
-            <TrendingDownIcon className="size-4" />
+            Strongest performer in your watchlist
           </div>
           <div className="text-muted-foreground">
-            Acquisition needs attention
+            Based on 24h percentage move
           </div>
         </CardFooter>
       </Card>
       <Card className="@container/card">
         <CardHeader>
-          <CardDescription>Active Accounts</CardDescription>
+          <CardDescription>Top Loser (24h)</CardDescription>
           <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
-            45,678
+            {topLoser ? topLoser.symbol : "-"}
           </CardTitle>
           <CardAction>
             <Badge variant="outline">
-              <TrendingUpIcon
-              />
-              +12.5%
+              <TrendingDownIcon />
+              {topLoser ? formatPercent(topLoser.change24h) : "-"}
             </Badge>
           </CardAction>
         </CardHeader>
         <CardFooter className="flex-col items-start gap-1.5 text-sm">
           <div className="line-clamp-1 flex gap-2 font-medium">
-            Strong user retention{" "}
-            <TrendingUpIcon className="size-4" />
+            Weakest performer in your watchlist
           </div>
-          <div className="text-muted-foreground">Engagement exceed targets</div>
+          <div className="text-muted-foreground">Track risk and downside pressure</div>
         </CardFooter>
       </Card>
       <Card className="@container/card">
         <CardHeader>
-          <CardDescription>Growth Rate</CardDescription>
+          <CardDescription>Average 24h Change</CardDescription>
           <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
-            4.5%
+            {formatPercent(averageChange)}
           </CardTitle>
           <CardAction>
             <Badge variant="outline">
-              <TrendingUpIcon
-              />
-              +4.5%
+              {averageChange >= 0 ? <TrendingUpIcon /> : <TrendingDownIcon />}
+              {data.length} coins
             </Badge>
           </CardAction>
         </CardHeader>
         <CardFooter className="flex-col items-start gap-1.5 text-sm">
           <div className="line-clamp-1 flex gap-2 font-medium">
-            Steady performance increase{" "}
-            <TrendingUpIcon className="size-4" />
+            Overall market mood from tracked assets
           </div>
-          <div className="text-muted-foreground">Meets growth projections</div>
+          <div className="text-muted-foreground">Aligned to CoinMarketCap-style summary cards</div>
         </CardFooter>
       </Card>
     </div>
