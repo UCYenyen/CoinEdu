@@ -83,16 +83,17 @@ export interface SubmitAnswerResponse {
 }
 
 export interface LeaderboardEntry {
-    rank: number
-    userId: string
-    username: string
-    totalXp: number
-    avatar?: string
+  rank: number
+  userId: string
+  username: string
+  email: string
+  avatar: string | null
+  xp: number
+  return: string
 }
 
 export interface LeaderboardResponse {
     entries: LeaderboardEntry[]
-    userRank?: number
     totalUsers: number
 }
 
@@ -414,7 +415,8 @@ export async function retryApiCall<T>(
 /**
  * Format XP display with commas
  */
-export function formatXp(xp: number): string {
+export function formatXp(xp?: number): string {
+    if (typeof xp !== "number") return "0"
     return xp.toLocaleString()
 }
 

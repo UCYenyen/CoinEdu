@@ -48,7 +48,7 @@ export async function GET(request: NextRequest) {
         }))
 
         return NextResponse.json({
-            leaderboard: ranked,
+            entries: ranked,
             total: leaderboard.length,
         })
     } catch (error) {

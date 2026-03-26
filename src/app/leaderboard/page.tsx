@@ -35,8 +35,8 @@ type PeriodType = "weekly" | "alltime"
 interface PodiumEntry {
   rank: number
   username: string
-  totalXp: number
-  avatar?: string
+  xp: number
+  avatar?: string | null
 }
 
 const medalConfig: Record<number, { color: string; label: string }> = {
@@ -137,7 +137,7 @@ function PodiumCard({ entry, isFirst }: PodiumCardProps) {
                 isFirst ? "text-tertiary" : ""
               )}
             >
-              {apiClient.formatXp(entry.totalXp)}{" "}
+              {apiClient.formatXp(entry.xp)}{" "}
               <span className="text-sm font-bold">XP</span>
             </p>
           </div>
@@ -348,7 +348,7 @@ export default function LeaderboardPage() {
                   entry={{
                     rank: entry.rank,
                     username: entry.username,
-                    totalXp: entry.totalXp,
+                    xp: entry.xp,
                     avatar: entry.avatar,
                   }}
                   isFirst={entry.rank === 1}
@@ -394,7 +394,7 @@ export default function LeaderboardPage() {
                         <TableCell className="tabular-nums">
                           <span className="flex items-center gap-1 font-medium">
                             <ZapIcon className="size-3.5 text-tertiary" />
-                            {apiClient.formatXp(entry.totalXp)} XP
+                            {apiClient.formatXp(entry.xp)} XP
                           </span>
                         </TableCell>
                       </TableRow>
