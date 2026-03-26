@@ -6,8 +6,9 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { cn } from "@/lib/utils"
 import { BotIcon, MicIcon, PlusCircleIcon, SendHorizonalIcon } from "lucide-react"
+import { get } from "http"
 
-// ── Types ──────────────────────────────────────────────────────────────────
+// Types 
 
 type Message = {
   id: string
@@ -16,20 +17,32 @@ type Message = {
   content: React.ReactNode
 }
 
-// ── Initial demo messages ──────────────────────────────────────────────────
+// Helper to generate timestamps for messages
+function getTimestamp(label: "YOU" | "COINEDU AI") {
+  const now = new Date()
+
+  const time = now.toLocaleTimeString([], {
+    hour: "2-digit",
+    minute: "2-digit",
+  })
+
+  return `${label} · ${time}`
+}
+
+// Message
 
 const initialMessages: Message[] = [
   {
     id: "1",
     role: "ai",
-    timestamp: "COINEDU AI · JUST NOW",
+    timestamp: getTimestamp("COINEDU AI"),
     content:
       "Hello! I can help you understand complex crypto concepts. What would you like to learn about today?",
   },
   {
     id: "2",
     role: "user",
-    timestamp: "YOU · 1 MIN AGO",
+    timestamp: getTimestamp("YOU"),
     content:
       "What is the difference between a hot wallet and a cold wallet?",
   },
@@ -69,7 +82,7 @@ const initialMessages: Message[] = [
   },
 ]
 
-// ── Component ──────────────────────────────────────────────────────────────
+// Component 
 
 export default function Page() {
   const [messages, setMessages] = useState<Message[]>(initialMessages)
@@ -80,27 +93,64 @@ export default function Page() {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" })
   }, [messages])
 
-  const sendMessage = () => {
-    const text = input.trim()
-    if (!text) return
+  const sendMessage = async () => {
+  const text = input.trim()
+  if (!text) return
 
-    const userMsg: Message = {
-      id: Date.now().toString(),
-      role: "user",
-      timestamp: "YOU · JUST NOW",
-      content: text,
-    }
+  const userMsg: Message = {
+    id: Date.now().toString(),
+    role: "user",
+    timestamp: getTimestamp("YOU"),
+    content: text,
+  }
+
+  // Add user message first
+  setMessages((prev) => [...prev, userMsg])
+  setInput("")
+
+  try {
+    const res = await fetch("/api/chat", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        messages: [
+          ...messages.map((m) => ({
+            role: m.role === "ai" ? "assistant" : "user",
+            content:
+              typeof m.content === "string"
+                ? m.content
+                : "Complex response",
+          })),
+          { role: "user", content: text },
+        ],
+      }),
+    })
+
+    const data = await res.json()
+
     const aiMsg: Message = {
       id: (Date.now() + 1).toString(),
       role: "ai",
-      timestamp: "COINEDU AI · JUST NOW",
-      content:
-        "Great question! I'm still learning about that topic. Check back soon for a detailed explanation.",
+      timestamp: getTimestamp("COINEDU AI"),
+      content: data.reply || "No response",
     }
 
-    setMessages((prev) => [...prev, userMsg, aiMsg])
-    setInput("")
+    setMessages((prev) => [...prev, aiMsg])
+  } catch (error) {
+    console.error(error)
+
+    const errorMsg: Message = {
+      id: (Date.now() + 1).toString(),
+      role: "ai",
+      timestamp: getTimestamp("COINEDU AI"),
+      content: "⚠️ Failed to get response. Try again.",
+    }
+
+    setMessages((prev) => [...prev, errorMsg])
   }
+}
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter" && !e.shiftKey) {
@@ -112,7 +162,7 @@ export default function Page() {
   return (
     <div className="flex flex-1 flex-col overflow-hidden">
 
-      {/* ── Messages ──────────────────────────────────────────── */}
+      {/* Messages */}
       <div className="flex-1 overflow-y-auto px-4 py-6 lg:px-6">
         <div className="mx-auto flex max-w-3xl flex-col gap-8">
           {messages.map((msg) => (
@@ -163,7 +213,7 @@ export default function Page() {
         </div>
       </div>
 
-      {/* ── Input bar ─────────────────────────────────────────── */}
+      {/* Input bar */}
       <div className="border-t border-border bg-background px-4 py-3 lg:px-6">
         <div className="mx-auto max-w-3xl">
           <div className="flex items-center gap-2 rounded-2xl border border-border bg-muted/40 px-3 py-2">
