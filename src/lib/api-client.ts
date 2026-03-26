@@ -244,20 +244,16 @@ export async function submitAnswer(payload: SubmitAnswerPayload): Promise<Submit
  * Fetches top users sorted by total XP
  */
 export async function getLeaderboard(
-    seasonId: string,
-    limit: number = 100
-): Promise<LeaderboardResponse> {
-    if (!seasonId) {
-        throw new Error('Season ID is required')
-    }
-
-    if (limit < 1 || limit > 500) {
-        throw new Error('Limit must be between 1 and 500')
-    }
-
+  seasonId: string,
+  page: number = 1
+) {
     const response = await fetch(
-        `/api/leaderboard?seasonId=${seasonId}&limit=${limit}`
+    `/api/leaderboard?seasonId=${seasonId}&page=${page}`
     )
+
+    if (!response.ok) {
+    throw new Error("Failed to fetch leaderboard")
+    }
 
     if (!response.ok) {
         if (response.status === 400) {

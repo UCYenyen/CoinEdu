@@ -161,6 +161,8 @@ export default function LeaderboardPage() {
   const [userRank, setUserRank] = useState<number | null>(null)
   const [loadingMore, setLoadingMore] = useState(false)
 
+  const [page, setPage] = useState(1)
+
   // ─── Effects ──────────────────────────────────────────────────────────
 
   useEffect(() => {
@@ -174,7 +176,7 @@ export default function LeaderboardPage() {
         setActiveSeason(season)
 
         // Get leaderboard
-        const leaderboardData = await apiClient.getLeaderboard(season.id, 100)
+        const leaderboardData = await apiClient.getLeaderboard(season.id, page)
         setLeaderboard(leaderboardData.entries || [])
 
         // Get user rank if logged in
@@ -197,7 +199,7 @@ export default function LeaderboardPage() {
     }
 
     initializeLeaderboard()
-  }, [session?.user])
+  }, [session?.user, page])
 
   // Handle load more
   const handleLoadMore = async () => {
@@ -205,11 +207,11 @@ export default function LeaderboardPage() {
 
     try {
       setLoadingMore(true)
-      const nextPage = Math.ceil(leaderboard.length / 50) + 1
-      const moreData = await apiClient.getLeaderboardPaginated(
+      const nextPage = page + 1
+      setPage(nextPage)
+      const moreData = await apiClient.getLeaderboard(
         activeSeason.id,
-        nextPage,
-        50
+        nextPage
       )
       setLeaderboard((prev) => [...prev, ...(moreData.entries || [])])
     } catch (err) {
@@ -414,23 +416,29 @@ export default function LeaderboardPage() {
           </Card>
 
           {/* Load More Button */}
-          {safeLeaderboard && safeLeaderboard.length > 0 && safeLeaderboard.length % 50 === 0 && (
-            <Button
-              onClick={handleLoadMore}
-              disabled={loadingMore}
-              variant="outline"
-              className="w-full"
+          <div className="flex items-center justify-between mt-6 py-3 px-4 bg-muted rounded-lg border border-border">
+            <button
+              onClick={() => setPage((p) => Math.max(p - 1, 1))}
+              disabled={page === 1}
+              className="px-3 py-1.5 text-sm font-medium border border-border rounded-md hover:bg-background disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             >
-              {loadingMore ? (
-                <>
-                  <Loader2 className="size-4 mr-2 animate-spin" />
-                  Loading...
-                </>
-              ) : (
-                "Load More Rankings"
-              )}
-            </Button>
-          )}
+              ← Back
+            </button>
+
+            <div className="text-center">
+              <p className="text-xs text-muted-foreground">Page</p>
+              <p className="text-base font-semibold">
+                {page} <span className="text-muted-foreground font-normal">of 12</span>
+              </p>
+            </div>
+
+            <button
+              onClick={() => setPage((p) => p + 1)}
+              className="px-3 py-1.5 text-sm font-medium border border-border rounded-md hover:bg-background transition-colors"
+            >
+              Next →
+            </button>
+          </div>
         </div>
       </div>
     </div>

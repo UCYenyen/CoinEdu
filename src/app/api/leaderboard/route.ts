@@ -14,6 +14,11 @@ export async function GET(request: NextRequest) {
             )
         }
 
+        // Pagination Setup
+        const page = parseInt(searchParams.get("page") || "1")
+        const pageSize = 8
+        const skip = (page - 1) * pageSize
+
         // Fetch top users by XP for the season
         const leaderboard = await prisma.userSeasonXP.findMany({
             where: {
@@ -32,12 +37,18 @@ export async function GET(request: NextRequest) {
             orderBy: {
                 totalXp: "desc",
             },
-            take: limit,
+            skip: skip,
+            take: pageSize,
+        })
+
+        // Total count (for pagination UI)
+        const totalUsers = await prisma.userSeasonXP.count({
+            where: { seasonId },
         })
 
         // Add rankings
         const ranked = leaderboard.map((entry, index) => ({
-            rank: index + 1,
+            rank: skip + index + 1,
             userId: entry.user.id,
             username: entry.user.name,
             email: entry.user.email,
@@ -49,7 +60,9 @@ export async function GET(request: NextRequest) {
 
         return NextResponse.json({
             entries: ranked,
-            total: leaderboard.length,
+            total: totalUsers,
+            page,
+            pageSize
         })
     } catch (error) {
         console.error("Error fetching leaderboard:", error)
