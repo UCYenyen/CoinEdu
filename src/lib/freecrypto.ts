@@ -44,6 +44,7 @@ export function getFreeCryptoConfig() {
   }
 }
 
+
 export async function fetchFreeCrypto(
   endpoint: FreeCryptoEndpoint,
   searchParams?: URLSearchParams,

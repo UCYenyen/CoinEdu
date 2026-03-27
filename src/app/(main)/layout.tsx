@@ -20,7 +20,7 @@ export default function MainLayout({
         }
       >
         <AppSidebar variant="inset" />
-        <SidebarInset>
+        <SidebarInset className="--background">
           <SiteHeader />
           <main className="flex-1 p-4">
             {children}
