@@ -24,7 +24,8 @@ model User {
 
   seasonXPs    UserSeasonXP[]
   attempts     DailyAttempt[]
-
+  transactions PortfolioTransaction[]
+  
   @@unique([email])
   @@map("user")
 }
@@ -163,4 +164,24 @@ model DailyAttempt {
 
   // Index ini sangat penting untuk mengecek "Apakah user ini sudah jawab indikator ini hari ini?"
   @@index([userId, indicatorId, attemptedAt]) 
+}
+
+model PortfolioTransaction {
+  id           String   @id @default(uuid())
+  userId       String
+  coinId       String
+  coinSymbol   String
+  type         String   // BUY, SELL, TRANSFER
+  quantity     Float
+  pricePerCoin Float
+  date         DateTime
+  fee          Float    @default(0)
+  notes        String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([coinId])
 }
