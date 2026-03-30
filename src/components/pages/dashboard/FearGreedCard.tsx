@@ -3,6 +3,7 @@
 import { Card, CardContent } from "@/components/ui/card"
 import { ChevronRight } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { MetricInfo } from "@/components/common/metric-info"
 
 interface FearGreedCardProps {
   value: number
@@ -46,8 +47,12 @@ export function FearGreedCard({
   return (
     <Card className={cn("overflow-hidden border bg-card text-card-foreground p-0 py-0", className)}>
       <CardContent className="p-4 flex flex-col gap-0 flex-1">
-        <div className="flex items-center text-sm font-semibold text-muted-foreground hover:text-foreground cursor-pointer transition-colors w-fit">
-          Fear & Greed <ChevronRight className="h-4 w-4 ml-1 opacity-50" />
+        <div className="flex items-center text-sm font-semibold text-muted-foreground transition-colors w-fit">
+          <MetricInfo 
+            title="Fear & Greed" 
+            description="A barometer for investor sentiment in the crypto market."
+            metricId="fearGreed"
+          />
         </div>
         
         <div className="relative w-full flex justify-center items-center mt-0">

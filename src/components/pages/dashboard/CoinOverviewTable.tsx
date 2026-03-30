@@ -12,6 +12,7 @@ import {
 import { Button } from "@/components/ui/button"
 import { CoinGeckoMarketData } from "@/features/dashboard/all-coin-overview/interfaces"
 import { cn } from "@/lib/utils"
+import { MetricInfo } from "@/components/common/metric-info"
 
 interface CoinOverviewTableProps {
   coins: CoinGeckoMarketData[]
@@ -56,11 +57,21 @@ export function CoinOverviewTable({ coins }: CoinOverviewTableProps) {
             <TableRow className="hover:bg-transparent">
               <TableHead className="w-12.5">#</TableHead>
               <TableHead>Name</TableHead>
-              <TableHead className="text-right">Price</TableHead>
-              <TableHead className="text-right">24h %</TableHead>
-              <TableHead className="text-right">Market Cap</TableHead>
-              <TableHead className="text-right">Volume (24h)</TableHead>
-              <TableHead className="text-right">Circulating Supply</TableHead>
+              <TableHead className="text-right">
+                <MetricInfo title="Price" description="Current market price per token." metricId="price" className="justify-end" />
+              </TableHead>
+              <TableHead className="text-right">
+                <MetricInfo title="24h %" description="Price change percentage in the last 24 hours." metricId="change24h" className="justify-end" />
+              </TableHead>
+              <TableHead className="text-right">
+                <MetricInfo title="Market Cap" description="Total market value of the coin's circulating supply." metricId="marketCap" className="justify-end" />
+              </TableHead>
+              <TableHead className="text-right">
+                <MetricInfo title="Volume (24h)" description="Total value traded in the last 24 hours." metricId="volume" className="justify-end" />
+              </TableHead>
+              <TableHead className="text-right">
+                <MetricInfo title="Circulating Supply" description="Amount of tokens currently available to the public." metricId="circulatingSupply" className="justify-end" />
+              </TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
