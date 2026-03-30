@@ -5,17 +5,17 @@ import { nextCookies } from "better-auth/next-js";
 import { prisma } from "./prisma"; // Import the singleton we just created
 
 export const auth = betterAuth({
-  // Connect Prisma! 
+  // Connect Prisma!
   // Change "postgresql" to "mysql" or "sqlite" if you are using something else
   database: prismaAdapter(prisma, {
-    provider: "postgresql", 
+    provider: "postgresql",
   }),
   baseURL: process.env.BETTER_AUTH_URL,
   trustedOrigins: [process.env.BETTER_AUTH_URL || ""].filter(Boolean),
-  
+
   emailAndPassword: {
     enabled: true,
   },
-  
-  plugins: [nextCookies()]
+
+  plugins: [nextCookies()],
 });

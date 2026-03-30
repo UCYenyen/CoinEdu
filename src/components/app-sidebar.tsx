@@ -126,22 +126,6 @@ const data = {
         />
       ),
     },
-    {
-      title: "Get Help",
-      url: "/help",
-      icon: (
-        <CircleHelpIcon
-        />
-      ),
-    },
-    {
-      title: "Search",
-      url: "/search",
-      icon: (
-        <SearchIcon
-        />
-      ),
-    },
   ],
   // documents: [
   //   {
