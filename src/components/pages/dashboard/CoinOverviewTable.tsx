@@ -1,6 +1,7 @@
 "use client"
 
-import * as React from "react"
+import { useRouter } from "next/navigation"
+// import * as React from "react"
 import {
   Table,
   TableBody,
@@ -13,6 +14,7 @@ import { Button } from "@/components/ui/button"
 import { CoinGeckoMarketData } from "@/features/dashboard/all-coin-overview/interfaces"
 import { cn } from "@/lib/utils"
 import { MetricInfo } from "@/components/common/metric-info"
+import React from "react"
 
 interface CoinOverviewTableProps {
   coins: CoinGeckoMarketData[]
@@ -21,6 +23,7 @@ interface CoinOverviewTableProps {
 const PAGE_SIZE = 12
 
 export function CoinOverviewTable({ coins }: CoinOverviewTableProps) {
+  const router = useRouter()
   const [page, setPage] = React.useState(1)
 
   const totalPages = Math.max(1, Math.ceil(coins.length / PAGE_SIZE))
@@ -81,8 +84,12 @@ export function CoinOverviewTable({ coins }: CoinOverviewTableProps) {
                 const isPositive = prev24h !== undefined && prev24h !== null && prev24h >= 0
 
                 return (
-                  <TableRow key={coin.id}>
-                    <TableCell className="font-medium text-muted-foreground w-12.5">
+                  <TableRow 
+                    key={coin.id}
+                    className="cursor-pointer hover:bg-muted/50 transition-colors"
+                    onClick={() => router.push(`/coins/${coin.id}`)}
+                  >
+                    <TableCell className="font-medium text-muted-foreground w-[50px]">
                       {coin.market_cap_rank}
                     </TableCell>
                     <TableCell>
