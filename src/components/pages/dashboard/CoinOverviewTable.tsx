@@ -1,3 +1,6 @@
+"use client"
+
+import * as React from "react"
 import {
   Table,
   TableBody,
@@ -6,6 +9,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
+import { Button } from "@/components/ui/button"
 import { CoinGeckoMarketData } from "@/features/dashboard/all-coin-overview/interfaces"
 import { cn } from "@/lib/utils"
 
@@ -13,7 +17,24 @@ interface CoinOverviewTableProps {
   coins: CoinGeckoMarketData[]
 }
 
+const PAGE_SIZE = 12
+
 export function CoinOverviewTable({ coins }: CoinOverviewTableProps) {
+  const [page, setPage] = React.useState(1)
+
+  const totalPages = Math.max(1, Math.ceil(coins.length / PAGE_SIZE))
+
+  React.useEffect(() => {
+    if (page > totalPages) {
+      setPage(totalPages)
+    }
+  }, [page, totalPages])
+
+  const paginatedCoins = React.useMemo(() => {
+    const startIndex = (page - 1) * PAGE_SIZE
+    return coins.slice(startIndex, startIndex + PAGE_SIZE)
+  }, [coins, page])
+
   const formatCurrency = (val: number) => {
     return new Intl.NumberFormat("en-US", {
       style: "currency",
@@ -33,7 +54,7 @@ export function CoinOverviewTable({ coins }: CoinOverviewTableProps) {
         <Table className="">
           <TableHeader>
             <TableRow className="hover:bg-transparent">
-              <TableHead className="w-[50px]">#</TableHead>
+              <TableHead className="w-12.5">#</TableHead>
               <TableHead>Name</TableHead>
               <TableHead className="text-right">Price</TableHead>
               <TableHead className="text-right">24h %</TableHead>
@@ -44,13 +65,13 @@ export function CoinOverviewTable({ coins }: CoinOverviewTableProps) {
           </TableHeader>
           <TableBody>
             {coins && coins.length > 0 ? (
-              coins.map((coin) => {
+              paginatedCoins.map((coin) => {
                 const prev24h = coin.price_change_percentage_24h
                 const isPositive = prev24h !== undefined && prev24h !== null && prev24h >= 0
 
                 return (
                   <TableRow key={coin.id}>
-                    <TableCell className="font-medium text-muted-foreground w-[50px]">
+                    <TableCell className="font-medium text-muted-foreground w-12.5">
                       {coin.market_cap_rank}
                     </TableCell>
                     <TableCell>
@@ -111,6 +132,35 @@ export function CoinOverviewTable({ coins }: CoinOverviewTableProps) {
           </TableBody>
         </Table>
       </div>
+      {coins.length > 0 && (
+        <div className="flex items-center justify-between border-t px-4 py-3">
+          <p className="text-sm text-muted-foreground">
+            Showing {(page - 1) * PAGE_SIZE + 1}-
+            {Math.min(page * PAGE_SIZE, coins.length)} of {coins.length}
+          </p>
+          <div className="flex items-center gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setPage((current) => Math.max(1, current - 1))}
+              disabled={page === 1}
+            >
+              Previous
+            </Button>
+            <span className="text-sm text-muted-foreground">
+              Page {page} of {totalPages}
+            </span>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setPage((current) => Math.min(totalPages, current + 1))}
+              disabled={page === totalPages}
+            >
+              Next
+            </Button>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
