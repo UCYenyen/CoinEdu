@@ -17,18 +17,7 @@ import {
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 
-export type MetricId = 
-  | 'holdings' | 'avgBuy' | 'pnl' 
-  | 'globalMarketCap' | 'fearGreed' 
-  | 'price' | 'change24h' | 'marketCap' 
-  | 'volume' | 'circulatingSupply'
-
-interface MetricInfoProps {
-  title: string
-  description: string
-  metricId: MetricId
-  className?: string
-}
+import { MetricId, MetricInfoProps } from "@/types/metrics"
 
 const PROMPTS: Record<MetricId, string> = {
   holdings: "Explain what 'Holdings' means in a crypto portfolio. Include how total value is calculated (quantity * current price) and why it's important to track. Format the response in a structured way with sections like 'Definition', 'Calculation', and 'Why it matters'. Use bullet points.",
@@ -96,7 +85,7 @@ export function MetricInfo({ title, description, metricId, className }: MetricIn
           </TooltipTrigger>
           <TooltipContent 
             side="top"
-            className="bg-popover text-popover-foreground border border-border p-4 w-72 shadow-2xl glow-primary rounded-xl z-60"
+            className="bg-popover text-popover-foreground border border-border p-4 w-fit max-w-[280px] shadow-2xl glow-primary rounded-xl z-60"
           >
             <div className="space-y-4">
               <div className="space-y-1.5">

@@ -17,7 +17,7 @@ export default async function Dashboard() {
   return (
     <div className="p-6 space-y-6">
       <div className="flex flex-wrap items-stretch gap-4">
-        <div className="w-[20vw] min-w-[250px]">
+        <div className="min-w-[250px] w-80">
           <StatCard
             title="Global Market Cap"
             value={value}
@@ -25,7 +25,7 @@ export default async function Dashboard() {
             className="h-full"
           ></StatCard>
         </div>
-        <div className="w-[20vw] min-w-[250px]">
+        <div className="min-w-[250px] w-80">
           <FearGreedCard 
             value={fearGreedData.value} 
             classification={fearGreedData.classification} 
