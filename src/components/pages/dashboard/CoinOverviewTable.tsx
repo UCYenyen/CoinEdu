@@ -1,6 +1,7 @@
 "use client"
 
 import { useRouter } from "next/navigation"
+// import * as React from "react"
 import {
   Table,
   TableBody,
@@ -9,15 +10,34 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
+import { Button } from "@/components/ui/button"
 import { CoinGeckoMarketData } from "@/features/dashboard/all-coin-overview/interfaces"
 import { cn } from "@/lib/utils"
+import { MetricInfo } from "@/components/common/metric-info"
+import React from "react"
 
 interface CoinOverviewTableProps {
   coins: CoinGeckoMarketData[]
 }
 
+const PAGE_SIZE = 12
+
 export function CoinOverviewTable({ coins }: CoinOverviewTableProps) {
   const router = useRouter()
+  const [page, setPage] = React.useState(1)
+
+  const totalPages = Math.max(1, Math.ceil(coins.length / PAGE_SIZE))
+
+  React.useEffect(() => {
+    if (page > totalPages) {
+      setPage(totalPages)
+    }
+  }, [page, totalPages])
+
+  const paginatedCoins = React.useMemo(() => {
+    const startIndex = (page - 1) * PAGE_SIZE
+    return coins.slice(startIndex, startIndex + PAGE_SIZE)
+  }, [coins, page])
 
   const formatCurrency = (val: number) => {
     return new Intl.NumberFormat("en-US", {
@@ -38,18 +58,28 @@ export function CoinOverviewTable({ coins }: CoinOverviewTableProps) {
         <Table className="">
           <TableHeader>
             <TableRow className="hover:bg-transparent">
-              <TableHead className="w-[50px]">#</TableHead>
+              <TableHead className="w-12.5">#</TableHead>
               <TableHead>Name</TableHead>
-              <TableHead className="text-right">Price</TableHead>
-              <TableHead className="text-right">24h %</TableHead>
-              <TableHead className="text-right">Market Cap</TableHead>
-              <TableHead className="text-right">Volume (24h)</TableHead>
-              <TableHead className="text-right">Circulating Supply</TableHead>
+              <TableHead className="text-right">
+                <MetricInfo title="Price" description="Current market price per token." metricId="price" className="justify-end" />
+              </TableHead>
+              <TableHead className="text-right">
+                <MetricInfo title="24h %" description="Price change percentage in the last 24 hours." metricId="change24h" className="justify-end" />
+              </TableHead>
+              <TableHead className="text-right">
+                <MetricInfo title="Market Cap" description="Total market value of the coin's circulating supply." metricId="marketCap" className="justify-end" />
+              </TableHead>
+              <TableHead className="text-right">
+                <MetricInfo title="Volume (24h)" description="Total value traded in the last 24 hours." metricId="volume" className="justify-end" />
+              </TableHead>
+              <TableHead className="text-right">
+                <MetricInfo title="Circulating Supply" description="Amount of tokens currently available to the public." metricId="circulatingSupply" className="justify-end" />
+              </TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {coins && coins.length > 0 ? (
-              coins.map((coin) => {
+              paginatedCoins.map((coin) => {
                 const prev24h = coin.price_change_percentage_24h
                 const isPositive = prev24h !== undefined && prev24h !== null && prev24h >= 0
 
@@ -120,6 +150,35 @@ export function CoinOverviewTable({ coins }: CoinOverviewTableProps) {
           </TableBody>
         </Table>
       </div>
+      {coins.length > 0 && (
+        <div className="flex items-center justify-between border-t px-4 py-3">
+          <p className="text-sm text-muted-foreground">
+            Showing {(page - 1) * PAGE_SIZE + 1}-
+            {Math.min(page * PAGE_SIZE, coins.length)} of {coins.length}
+          </p>
+          <div className="flex items-center gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setPage((current) => Math.max(1, current - 1))}
+              disabled={page === 1}
+            >
+              Previous
+            </Button>
+            <span className="text-sm text-muted-foreground">
+              Page {page} of {totalPages}
+            </span>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setPage((current) => Math.min(totalPages, current + 1))}
+              disabled={page === totalPages}
+            >
+              Next
+            </Button>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

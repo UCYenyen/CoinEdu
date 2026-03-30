@@ -29,7 +29,7 @@ export async function GET(request: NextRequest) {
     for (const coin of data.data || []) {
       formatted[coin.symbol] = {
         price: coin.price,
-        change: coin.percent_change_24h,
+        change24h: coin.percent_change_24h,
       }
     }
 
