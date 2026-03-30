@@ -4,7 +4,7 @@ import { createAuthClient } from "better-auth/react";
 export const authClient = createAuthClient({
   // You only need to pass the baseURL if your auth server 
   // is on a different domain than your frontend.
-  baseURL: process.env.BETTER_AUTH_URL 
+  baseURL: process.env.NEXT_PUBLIC_BETTER_AUTH_URL 
 });
 
 // Export handy hooks and functions for your components
