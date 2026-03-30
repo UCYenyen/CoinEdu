@@ -1,3 +1,6 @@
+"use client"
+
+import { useRouter } from "next/navigation"
 import {
   Table,
   TableBody,
@@ -14,6 +17,8 @@ interface CoinOverviewTableProps {
 }
 
 export function CoinOverviewTable({ coins }: CoinOverviewTableProps) {
+  const router = useRouter()
+
   const formatCurrency = (val: number) => {
     return new Intl.NumberFormat("en-US", {
       style: "currency",
@@ -49,7 +54,11 @@ export function CoinOverviewTable({ coins }: CoinOverviewTableProps) {
                 const isPositive = prev24h !== undefined && prev24h !== null && prev24h >= 0
 
                 return (
-                  <TableRow key={coin.id}>
+                  <TableRow 
+                    key={coin.id}
+                    className="cursor-pointer hover:bg-muted/50 transition-colors"
+                    onClick={() => router.push(`/coins/${coin.id}`)}
+                  >
                     <TableCell className="font-medium text-muted-foreground w-[50px]">
                       {coin.market_cap_rank}
                     </TableCell>
